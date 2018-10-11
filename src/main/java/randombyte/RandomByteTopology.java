@@ -33,7 +33,7 @@ public class RandomByteTopology {
 
 
         StormSubmitter.submitTopologyWithProgressBar(
-                "word-count-soln", conf,
+                "random-byte-experiment", conf,
                 builder.createTopology());
 
     }

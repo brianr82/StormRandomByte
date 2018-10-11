@@ -17,6 +17,7 @@ public class AppendByteBolt extends BaseBasicBolt {
         String append_word = word + "!!!";
         basicOutputCollector.emit(new Values(append_word));
         System.out.println("\n*** Appended Sentence Bolt *** " + append_word + " ***\n");
+
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
