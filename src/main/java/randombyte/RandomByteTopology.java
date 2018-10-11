@@ -19,9 +19,8 @@ public class RandomByteTopology {
                 new RelayBolt(), 4)
                 .shuffleGrouping("generator").setMemoryLoad(2048);
 
-        builder.setBolt("appender",
-                new AppendByteBolt(), 8)
-                .fieldsGrouping("relayer", new Fields("appended_word")).setMemoryLoad(2048);
+        builder.setBolt("appender", new AppendByteBolt(), 8)
+                .shuffleGrouping("relayer").setMemoryLoad(2048);
 
 
         Config conf = new Config();
@@ -31,10 +30,7 @@ public class RandomByteTopology {
 
 
 
-
-        StormSubmitter.submitTopologyWithProgressBar(
-                "random-byte-experiment", conf,
-                builder.createTopology());
+        StormSubmitter.submitTopologyWithProgressBar("random-byte-experiment", conf, builder.createTopology());
 
     }
 }

@@ -15,29 +15,25 @@ import java.util.Random;
 public class RandomByteSpout extends BaseRichSpout {
 
 
-    private static final String[] SENTENCES =
-            new String[] { "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                    "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-                    "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-            };
 
     private SpoutOutputCollector collector;
-    private Random random;
+
 
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         this.collector = spoutOutputCollector;
-        this.random = new Random();
+
     }
 
     public void nextTuple() {
-        //Utils.sleep(3000);
-        String sentence = SENTENCES[this.random.nextInt(SENTENCES.length)];
-        //System.out.println("\n******* Random Sentence Spout ***** " + sentence + " ******\n");
-        this.collector.emit(new Values(sentence));
+        StringBuilder payload = new StringBuilder(100);
+        for (int i=0; i<100; i++) {
+            payload.append('P');
+        }
+        this.collector.emit(new Values(payload.toString().getBytes()));
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declare(new Fields("sentence"));
+        outputFieldsDeclarer.declare(new Fields("dataout"));
     }
 
 }

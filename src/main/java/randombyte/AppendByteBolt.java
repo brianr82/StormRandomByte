@@ -13,14 +13,19 @@ public class AppendByteBolt extends BaseBasicBolt {
 
 
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
-        String word = tuple.getStringByField("word");
-        String append_word = word + "!!!";
-        basicOutputCollector.emit(new Values(append_word));
-        System.out.println("\n*** Appended Sentence Bolt *** " + append_word + " ***\n");
+
+        StringBuilder payload = new StringBuilder(100);
+        for (int i=0; i<100; i++) {
+            payload.append('P');
+        }
+
+        basicOutputCollector.emit(new Values(payload.toString().getBytes()));
+
+        System.out.println("\n*** Appended Sentence Bolt *** " + payload + " ***\n");
 
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declare(new Fields("appended_word"));
+        outputFieldsDeclarer.declare(new Fields("dataout"));
     }
 }

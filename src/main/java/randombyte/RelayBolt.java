@@ -14,17 +14,15 @@ public class RelayBolt extends BaseBasicBolt {
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
 
 
-        basicOutputCollector.emit(new Values(tuple.getStringByField("sentence")));
-        /*
-        String[] words = StringUtils.split(tuple.getStringByField("sentence"));
-        for( String word : words ) {
-            //System.out.println("\n*** Split Sentence Bolt *** " + word + " ***\n");
-            basicOutputCollector.emit(new Values(word));
+        StringBuilder payload = new StringBuilder(100);
+        for (int i=0; i<100; i++) {
+            payload.append('P');
         }
-        */
+        basicOutputCollector.emit(new Values(payload.toString().getBytes()));
+
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declare(new Fields("word"));
+        outputFieldsDeclarer.declare(new Fields("dataout"));
     }
 }
