@@ -13,19 +13,21 @@ public class RandomByteTopology {
     public static void main(String[] args) throws InvalidTopologyException, AuthorizationException, AlreadyAliveException {
         TopologyBuilder builder = new TopologyBuilder();
 
-        builder.setSpout("generator",new RandomByteSpout(), 4).setMemoryLoad(12288);
+        builder.setSpout("generator",new RandomByteSpout(), 1).setMemoryLoad(12288)
+                .addConfiguration("group-id", 1);
 
         builder.setBolt("relayer",
-                new RelayBolt(), 4)
-                .shuffleGrouping("generator").setMemoryLoad(2048);
+                new RelayBolt(), 1)
+                .shuffleGrouping("generator").setMemoryLoad(2048)
+                .addConfiguration("group-id", 1);
 
-        builder.setBolt("appender", new AppendByteBolt(), 8)
-                .shuffleGrouping("relayer").setMemoryLoad(2048);
-
+        builder.setBolt("appender", new AppendByteBolt(), 1)
+                .shuffleGrouping("relayer").setMemoryLoad(2048)
+                .addConfiguration("group-id", 2);
 
         Config conf = new Config();
         //conf.setDebug(true);
-        conf.setNumWorkers(8);
+        conf.setNumWorkers(4);
         conf.setTopologyWorkerMaxHeapSize(16384);
 
 
