@@ -19,13 +19,13 @@ public class AppendByteBolt extends BaseBasicBolt {
             payload.append('P');
         }
 
-        basicOutputCollector.emit(new Values(payload.toString().getBytes()));
+        //basicOutputCollector.emit(new Values(payload.toString().getBytes()));
 
-        System.out.println("\n*** Appended Sentence Bolt *** " + payload + " ***\n");
+        //System.out.println("\n*** Appended Sentence Bolt *** " + payload + " ***\n");
 
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declare(new Fields("dataout"));
+        //outputFieldsDeclarer.declare(new Fields("dataout"));
     }
 }

@@ -17,17 +17,17 @@ public class RandomByteTopology {
                 .addConfiguration("group-id", 1);
 
         builder.setBolt("relayer",
-                new RelayBolt(), 1)
+                new RelayBolt(), 2)
                 .shuffleGrouping("generator").setMemoryLoad(2048)
                 .addConfiguration("group-id", 1);
 
-        builder.setBolt("appender", new AppendByteBolt(), 1)
+        builder.setBolt("appender", new AppendByteBolt(), 2)
                 .shuffleGrouping("relayer").setMemoryLoad(2048)
                 .addConfiguration("group-id", 2);
 
         Config conf = new Config();
         //conf.setDebug(true);
-        conf.setNumWorkers(4);
+        conf.setNumWorkers(2);
         conf.setTopologyWorkerMaxHeapSize(16384);
 
 
