@@ -7,10 +7,15 @@ import org.apache.storm.generated.AuthorizationException;
 import org.apache.storm.generated.InvalidTopologyException;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
+import utils.Helper;
 
 public class RandomByteTopology {
 
-    public static void main(String[] args) throws InvalidTopologyException, AuthorizationException, AlreadyAliveException {
+
+    public static final String TOPOLOGY_NAME = "random-byte-experiment";
+
+
+    public static void main(String[] args) throws Exception {
         TopologyBuilder builder = new TopologyBuilder();
 
         builder.setSpout("generator",new RandomByteSpout(), 1).setMemoryLoad(12288)
@@ -32,7 +37,17 @@ public class RandomByteTopology {
 
 
 
-        StormSubmitter.submitTopologyWithProgressBar("random-byte-experiment", conf, builder.createTopology());
+
+        //StormSubmitter.submitTopologyWithProgressBar("random-byte-experiment", conf, builder.createTopology());
+        Config topoConf = conf;
+
+
+        int runTime = 180;
+
+        //  Submit topology to storm cluster
+        Helper.runOnClusterAndPrintMetrics(runTime, TOPOLOGY_NAME, topoConf, builder.createTopology());
+
+
 
     }
 }
