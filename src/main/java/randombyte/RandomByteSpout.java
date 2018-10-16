@@ -10,6 +10,7 @@ import org.apache.storm.utils.Utils;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 
 public class RandomByteSpout extends BaseRichSpout {
@@ -29,11 +30,19 @@ public class RandomByteSpout extends BaseRichSpout {
         for (int i=0; i<100; i++) {
             payload.append('P');
         }
-        this.collector.emit(new Values(payload.toString().getBytes()));
+
+        UUID msgID = UUID.randomUUID();
+        this.collector.emit(new Values(payload.toString().getBytes()),msgID);
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
         outputFieldsDeclarer.declare(new Fields("dataout"));
+    }
+
+
+    public void ack(Object msgId){
+
+        return;
     }
 
 }

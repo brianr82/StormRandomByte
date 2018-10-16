@@ -51,7 +51,7 @@ public class AppendByteBolt extends BaseBasicBolt {
 
 
         }
-        if((current_time - start_time) /1000000000l > 180 && written_to_file == false){
+        if((current_time - start_time) /1000000000l > 600 && written_to_file == false){
             LOG.info("###################################");
             for(WindowStatistics ws : stats_list){
                 LOG.info(ws.getString());
