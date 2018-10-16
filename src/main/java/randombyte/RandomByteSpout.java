@@ -42,7 +42,7 @@ public class RandomByteSpout extends BaseRichSpout {
 
     public void ack(Object msgId){
 
-        return;
+
     }
 
 }

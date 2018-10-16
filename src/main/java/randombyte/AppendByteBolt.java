@@ -1,9 +1,12 @@
 package randombyte;
 
 import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
+import org.apache.storm.task.OutputCollector;
+import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseBasicBolt;
+import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
@@ -11,21 +14,38 @@ import org.slf4j.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 
 
-public class AppendByteBolt extends BaseBasicBolt {
+public class AppendByteBolt extends BaseRichBolt {
 
     int counter = 0;
     long window_start_time = 0;
     long start_time = 0;
     boolean written_to_file = false;
 
+    private OutputCollector _collector;
+
 
     private static final Logger LOG = LoggerFactory.getLogger(AppendByteBolt.class);
 
     LinkedList<WindowStatistics> stats_list = new LinkedList<WindowStatistics>();
 
-    public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
+    //public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
+
+
+    //}
+
+    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
+        //outputFieldsDeclarer.declare(new Fields("dataout"));
+    }
+
+
+    public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
+        _collector = outputCollector;
+    }
+
+    public void execute(Tuple tuple) {
 
         if (window_start_time == 0) {
             window_start_time = System.nanoTime();
@@ -58,20 +78,15 @@ public class AppendByteBolt extends BaseBasicBolt {
             }
 
             LOG.info("###################################");
-           for(WindowStatistics ws : stats_list){
-               double throughput = (double)ws.count / ((ws.windowEndTime - ws.windowStartTime) / 1000000000l);
-               long window_timestamp = ws.windowEndTime/1000000000l;
-               LOG.info(window_timestamp +"," + throughput);
-           }
-        written_to_file = true;
+            for(WindowStatistics ws : stats_list){
+                double throughput = (double)ws.count / ((ws.windowEndTime - ws.windowStartTime) / 1000000000l);
+                long window_timestamp = ws.windowEndTime/1000000000l;
+                LOG.info(window_timestamp +"," + throughput);
+            }
+            written_to_file = true;
         }
+
+
+        _collector.ack(tuple);
     }
-
-    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        //outputFieldsDeclarer.declare(new Fields("dataout"));
-    }
-
-
-
-
 }
