@@ -29,7 +29,7 @@ public class AppendByteBolt extends BaseBasicBolt {
 
         if (window_start_time == 0) {
             window_start_time = System.nanoTime();
-
+            start_time = System.nanoTime();
         }
 
         StringBuilder payload = new StringBuilder(100);
@@ -51,7 +51,7 @@ public class AppendByteBolt extends BaseBasicBolt {
 
 
         }
-        if((current_time - start_time) /1000000000l > 1800 && written_to_file == false){
+        if((current_time - start_time) /1000000000l > 180 && written_to_file == false){
             LOG.info("###################################");
             for(WindowStatistics ws : stats_list){
                 LOG.info(ws.getString());
