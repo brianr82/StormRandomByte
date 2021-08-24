@@ -1,17 +1,18 @@
 package randombyte;
 
+import model.IDGenerator;
+import model.TupleHeader;
 import org.apache.storm.spout.SpoutOutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseRichSpout;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
-import org.apache.storm.utils.Utils;
+
 
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
-
+import java.time.ZonedDateTime;
 
 public class RandomByteSpout extends BaseRichSpout {
 
@@ -26,13 +27,29 @@ public class RandomByteSpout extends BaseRichSpout {
     }
 
     public void nextTuple() {
-        StringBuilder payload = new StringBuilder(100);
-        for (int i=0; i<100; i++) {
-            payload.append('P');
+        int size = 50;
+        StringBuilder payload = new StringBuilder(size);
+        for (int i=0; i<size; i++) {
+            payload.append('A');
         }
 
-        UUID msgID = UUID.randomUUID();
-        this.collector.emit(new Values(payload.toString().getBytes()),msgID);
+
+        model.Tuple tuple = new model.Tuple();
+        UUID tupleID = IDGenerator.generateType1UUID();
+
+
+        TupleHeader tupleHeader = new TupleHeader(tupleID.toString(), ZonedDateTime.now().toString(), ZonedDateTime.now().toString(), "", "");
+        tuple.setTupleHeader(tupleHeader);
+
+
+        this.collector.emit(new Values(payload.toString().getBytes(),tuple.getTupleHeader().getTimeStampFromSource()));
+
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {

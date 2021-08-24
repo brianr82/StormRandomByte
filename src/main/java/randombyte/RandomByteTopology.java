@@ -19,10 +19,10 @@ public class RandomByteTopology {
     public static void main(String[] args) throws Exception {
         TopologyBuilder builder = new TopologyBuilder();
 
-        builder.setSpout("generator",new RandomByteSpout(), 1).setMemoryLoad(12288)
+        builder.setSpout("generator",new RandomByteSpout(), 1).setMemoryLoad(2048)
                 .addConfiguration("group-id", 11);
 
-        builder.setBolt("relayer1",
+       /* builder.setBolt("relayer1",
                 new RelayBolt(), 6)
                 .shuffleGrouping("generator").setMemoryLoad(2048)
                 .addConfiguration("group-id", 11);
@@ -42,18 +42,18 @@ public class RandomByteTopology {
         builder.setBolt("relayer4",
                 new RelayBolt(), 6)
                 .shuffleGrouping("relayer3").setMemoryLoad(2048)
-                .addConfiguration("group-id", 26);
+                .addConfiguration("group-id", 26);*/
 
 
 
-        builder.setBolt("appender", new AppendByteBolt(), 6)
-                .shuffleGrouping("relayer4").setMemoryLoad(2048)
-                .addConfiguration("group-id", 13);
+        builder.setBolt("appender", new AppendByteBoltV2(), 1)
+                .shuffleGrouping("generator").setMemoryLoad(2048)
+                .addConfiguration("group-id", 11);
 
         Config conf = new Config();
         //conf.setDebug(true);
         conf.setNumWorkers(2);
-        conf.setTopologyWorkerMaxHeapSize(65536);
+        conf.setTopologyWorkerMaxHeapSize(12288);
 
 
 

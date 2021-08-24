@@ -1,18 +1,14 @@
 package randombyte;
 
-import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
+
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
-import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
-import org.apache.storm.topology.base.BaseBasicBolt;
 import org.apache.storm.topology.base.BaseRichBolt;
-import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
-import org.apache.storm.tuple.Values;
 import org.slf4j.*;
 
-import java.util.ArrayList;
+
 import java.util.LinkedList;
 import java.util.Map;
 
