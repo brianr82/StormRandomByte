@@ -37,19 +37,20 @@ public class RandomByteSpout extends BaseRichSpout {
         model.Tuple tuple = new model.Tuple();
         UUID tupleID = IDGenerator.generateType1UUID();
 
+        long currentTime = System.currentTimeMillis();
 
-        TupleHeader tupleHeader = new TupleHeader(tupleID.toString(), ZonedDateTime.now().toString(), ZonedDateTime.now().toString(), "", "");
+        TupleHeader tupleHeader = new TupleHeader(tupleID.toString(), String.valueOf(currentTime), String.valueOf(currentTime), "", "");
         tuple.setTupleHeader(tupleHeader);
 
 
         this.collector.emit(new Values(payload.toString().getBytes(),tuple.getTupleHeader().getTimeStampFromSource()));
 
 
-        try {
+      /*  try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
