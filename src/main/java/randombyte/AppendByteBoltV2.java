@@ -21,33 +21,19 @@ public class AppendByteBoltV2 extends BaseRichBolt {
     private OutputCollector _collector;
     private PrintWriter writer;
 
-    private static final Logger LOG = LoggerFactory.getLogger(AppendByteBoltV2.class);
-
-    private ArrayList<ImmutablePair> stats = new ArrayList<>();
-
-
-
     // Statistics
-    long currentRecordcount = 0l;
-    long windowStartTime  = System.nanoTime();
-    int batch_size = 1;
+    long currentRecordcount;
+    long windowStartTime;
+    long batch_size;
 
-
-    /////////////////////////////////
 
     int counter;
+    int sequenceCounter;
+    double windowMedianLatency;
+    long window_total_latency;
 
-    int sequenceCounter = 0;
-    double windowMedianLatency =0;
-    long window_total_latency =0;
-
-    ArrayList<Long> window_latencies = new ArrayList<>();
-
-    long experimentStartTime;
-    long runningTotal =0l;
-
-
-
+    ArrayList<Long> window_latencies;
+    long runningTotal;
 
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
@@ -57,27 +43,40 @@ public class AppendByteBoltV2 extends BaseRichBolt {
 
     public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
         _collector = outputCollector;
-
         //create the log file
         String logPathDirectory = "/home/brianr/storm_metrics/";
 
         String filename =  logPathDirectory + "storm_consumer.txt";
         try {
             writer  = new PrintWriter(new FileOutputStream(new File(filename), false));
+            writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        writer.println("---------[AppendByteBoltV2]--------------Supervisor Log -----------------------");
+
+
+        currentRecordcount = 0l;
+        windowStartTime  = System.nanoTime();
+        batch_size = 1l;
+
+
+        sequenceCounter = 0;
+        windowMedianLatency =0;
+        window_total_latency =0;
+
+        window_latencies = new ArrayList<>();
+        runningTotal =0l;
+
+
     }
 
     public void execute(Tuple tuple) {
-
-
+        _collector.ack(tuple);
+        String msgCreation = (String) tuple.getValue(1);
         counter++;
         runningTotal++;
-
-        String msgCreation = (String) tuple.getValue(1);
-
 
         long new_message_produced_time = Long.parseLong(msgCreation);
         long new_message_latency = System.currentTimeMillis() - new_message_produced_time;
@@ -113,23 +112,5 @@ public class AppendByteBoltV2 extends BaseRichBolt {
         }
 
 
-
-
-        //Long endtoend = Duration.between(ZonedDateTime.parse(msgCreation), ZonedDateTime.now()).toNanos();
-
-        //stats.add(new ImmutablePair(System.currentTimeMillis(),endtoend));
-
-
-
-/*        try {
-            this.csvWriter.append(System.currentTimeMillis() + ";" + endtoend + "\n");
-            this.csvWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-
-
-        _collector.ack(tuple);
     }
 }
